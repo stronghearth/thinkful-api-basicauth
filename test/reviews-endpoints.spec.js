@@ -24,7 +24,7 @@ describe('Reviews Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe(`POST /api/reviews`, () => {
+  describe.only(`POST /api/reviews`, () => {
     beforeEach('insert things', () =>
       helpers.seedThingsTables(
         db,

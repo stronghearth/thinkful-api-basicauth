@@ -18,7 +18,7 @@ reviewsRouter
           error: `Missing '${key}' in request body`
         })
         
-    newComment.user_id = req.user.id
+    newReview.user_id = req.user.id
 
     ReviewsService.insertReview(
       req.app.get('db'),
