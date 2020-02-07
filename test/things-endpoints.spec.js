@@ -25,7 +25,7 @@ describe('Things Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe(`Protected endpoints`, () => {
+  describe.only(`Protected endpoints`, () => {
 
       beforeEach('insert things', () => 
         helpers.seedThingsTables(
@@ -53,26 +53,27 @@ describe('Things Endpoints', function() {
 
         proctectedEndpoints.forEach(endpoint => {
         context(endpoint.name, () => {
-          it(`responds with a 401 'Missing Basic Token' when no basic token`, () => {
+          it.skip(`responds with a 401 'Missing Bearer Token' when no bearer token`, () => {
             return supertest(app)
                     .get(endpoint.path)
-                    .expect(401, { error: 'Missing basic token'})
+                    .expect(401, { error: 'Missing bearer token'})
           })
-          it(`responds with a 401 'Unauthorized request when no credentials in token`, () => {
-            const noUserCred = { user_name: '', password: '' }
+          it(`responds 401 'Unauthorized request' when invalid JWT secret`, () => {
+            const validUser = testUsers[0]
+            const invalidSecret = 'bad-secret'
             return supertest(app)
                     .get(endpoint.path)
-                    .set('Authorization', helpers.makeAuthHeader(noUserCred))
+                    .set('Authorization', helpers.makeAuthHeader(validUser, invalidSecret))
                     .expect(401, {error: 'Unauthorized request'})
           })
-          it(`responds with a 401 'Unauthorized request' when invalid user`, () => {
-            const userInvalidCreds = {user_name: 'user-not', password: 'existy'};
+          it.skip(`responds with a 401 'Unauthorized request' when sub in payload`, () => {
+            const invalidUser = { user_name: 'user-not-existy', id: 1 }
             return supertest(app)
                     .get(endpoint.path)
-                    .set('Authorization', helpers.makeAuthHeader(userInvalidCreds))
+                    .set('Authorization', helpers.makeAuthHeader(invalidUser))
                     .expect(401, {error: 'Unauthorized request'})
           })
-          it(`responds with a 400 'Unauthorized request' when invalid password`, () => {
+          it.skip(`responds with a 400 'Unauthorized request' when invalid password`, () => {
             const userInvalidPass = {user_name: testUsers[0].user_name, password: 'wrong'}
             return supertest(app)
                     .get(endpoint.path)
